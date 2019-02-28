@@ -37,7 +37,6 @@ int main(int argc, char *argv[])
     //auto vect_v = parse_input(argv[1], 'V');
 
 
- //   std::cout << vect_h.size() << std::endl;
     unsigned b_idx = 0;
     float b_score = 0;
 
@@ -67,13 +66,12 @@ int main(int argc, char *argv[])
             float cur_score = (float)cpt / (float)(vect_h.size());
             if (cur_score)
             {
-                //vect_h[i].score = cur_score;
-            //    vect_h[i].idx = i;
                 vect_h[i].scores.push_back(cur_score);
                 vect_h[i].idx.push_back(j);
-#pragma omp critical
+
+                if (cur_score > b_score)
                 {
-                    if (cur_score > b_score)
+                    #pragma omp critical
                     {
                         b_idx = i;
                         b_score = cur_score;
@@ -88,7 +86,6 @@ int main(int argc, char *argv[])
 
     for (unsigned i = 0; i < vect_h.size(); ++i)
         call_dump(vect_h, i);
-    //std::cout << b_idx << std::endl;
-    //std::cout << b_score << std::endl;
+
     return write_output("out");
 }
