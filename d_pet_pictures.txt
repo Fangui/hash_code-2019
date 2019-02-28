@@ -88826,7 +88826,6 @@ H 8 t82 t47 tq1 tw5 t31 tr5 t44 tn3
 V 12 tn3 td4 tw2 tf1 tz6 tp6 tr5 th4 tw5 t47 t82 th6
 H 5 t52 t74 tc4 tf4 t56
 V 12 tz2 tq2 th tm2 tf1 tl2 tp2 tt4 th4 tz6 t86 t65
-H 1 t87
 V 16 tb1 tt6 tc5 th6 t53 t2 t85 t02 tq3 tr5 tw5 tn6 t47 t12 tv4 tz5
 V 9 t61 tp2 tp6 tn6 t6 t05 ts2 tj5 tv4
 V 18 t85 t47 tp6 tf1 ts2 tx1 tt2 tf4 tk5 t53 tf5 tq5 tq6 t01 t86 t52 tz4 tb7

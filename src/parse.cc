@@ -2,25 +2,37 @@
 #include <fstream>
 #include <sstream>
 
+#include <unordered_set>
+
 #include "parse.hh"
+
 
 inline bool is_separator(char c)
 {
     return c == ' ' || c == '\t' || c == '\n';
 }
 
-void parse_input(const std::string &inp)
+std::vector<Node> parse_input(const std::string &inp, char c)
 {
     std::ifstream in(inp);
     std::string str;
     std::string line;
 
-    std::cout << "Read " << inp << '\n';
+    std::getline(in, line); // size
+    unsigned size = stod(line);
+
+  //  std::cout << "Read " << inp << '\n';
+    std::vector<Node> vect;
+    vect.reserve(size);
     while (std::getline(in, line))
     {
-        for (unsigned i = 0; i < line.size(); ++i)
+        if (line[0] != c)
+            continue;
+
+        std::unordered_set<std::string> set(50);
+        for (unsigned i = 2; i < line.size(); ++i)
         {
-            while (i < line.size() && is_separator(line[i]))
+            while ((i < line.size() && is_separator(line[i])) || (line[i] >= '0' && line[i] <= '9'))
                 ++i;
 
             std::string s;
@@ -28,11 +40,12 @@ void parse_input(const std::string &inp)
             while (i < line.size() && !is_separator(line[i]))
                 s += line[i++];
 
-            int val = stod(s);
-            std::cout << val << "| ";
+            set.insert(s);
         }
-        std::cout << '\n';
+        vect.push_back(Node(set, size));
     }
+
+    return vect;
 }
 
 int write_output(const std::string &out_path)

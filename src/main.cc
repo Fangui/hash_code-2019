@@ -15,7 +15,32 @@ int main(int argc, char *argv[])
         std::cout << "Usage : " << argv[0] << " inputfile outputfile" << '\n';
         return 1;
     }
-    parse_input(argv[1]);
+    auto vect_h = parse_input(argv[1], 'H');
+    auto vect_v = parse_input(argv[1], 'V');
+
+    std::cout << vect_h.size() << std::endl;
+    for (unsigned i = 0; i < vect_h.size(); ++i)
+    {
+        auto &set_cur = vect_h[i].set;
+        unsigned cpt = 0;
+
+        for (unsigned j = 0; j < vect_h.size(); ++j)
+        {
+            if (i != j)
+            {
+                auto &set_j = vect_h[j].set;
+                for (const auto &str : set_cur)
+                {
+                    if (set_j.find(str) != set_j.end()) //find
+                        ++cpt;
+                }
+            }
+
+            vect_h[i].score[j] = (float)cpt / (float)(vect_h.size());
+            if (vect_h[i].score[j] > 0.55 && vect_h[i].score[j] < 0.55)
+                std::cout << vect_h[i].score[j] << std::endl;
+        }
+    }
 
     return write_output("out");
 }

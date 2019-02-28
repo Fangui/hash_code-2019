@@ -14,8 +14,8 @@ check: CXXFLAGS = -g3 -fopenmp
 check: $(BIN)
 
 hash:
-	./$(BIN) test out1
-	./$(BIN) test out2
+	./$(BIN) ../a_example.txt out1
+	./$(BIN) ../b_lovely_landscapes.txt out2
 
 run:
 	../launch.sh
