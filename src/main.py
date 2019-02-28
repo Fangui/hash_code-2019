@@ -43,7 +43,7 @@ if __name__ == "__main__":
 
     filename = sys.argv[1]
     raw = parse(filename)
-
+    print(raw)
     for i in raw:
             res.append(i.pos)
     dump(res)
