@@ -18,7 +18,7 @@ def parse(filename):
     with open(filename) as f:
             size = f.readline()
             for data in f:
-                photo = Photo(data.split()[0], data.split()[1], data.split()[2:])
+                photo = Photo(data.split()[0], data.split()[1], set(data.split()[2:]))
                 raw.append(photo)
     return size, raw
 
