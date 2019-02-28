@@ -19,25 +19,27 @@ def parse(filename):
             size = f.readline()
             for data in f:
                 photo = Photo(data.split()[0], data.split()[1], set(data.split()[2:]))
-                raw.append(photo)
+                if (photo.v == 'H'):
+                    raw.append(photo)
     return size, raw
 
 
-def dump(res, s_size):
-        print(s_size)
+def dump(res):
+        print(len(res))
         for data in res:
                 print(data)
         return;
 
 if __name__ == "__main__":
     res = []
-    s_size = 0
 
     size = 0
 
     filename = sys.argv[1]
     (size, raw) = parse(filename)
     s_size = size[0]
-    for i in range(0, int(size)):
+
+
+    for i in range(0, len(res)):
             res.append(i)
-    dump(res, s_size)
+    dump(res)
