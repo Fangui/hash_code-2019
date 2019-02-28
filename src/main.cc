@@ -4,9 +4,28 @@
 //#include <parallel/algorithm>
 #include <vector>
 
+#include <cmath>
 #include "parse.hh"
 
-using pair_v = std::pair<char, int>;
+void dump(std::vector<Node> &vect, Node &n)
+{
+    if (n.used)
+        return;
+
+    n.used = true;
+
+    std::cout << n.id << '\n';
+    for (unsigned i = 0; i < n.scores.size(); ++i)
+    {
+        dump(vect, vect[n.idx[i]]);
+    }
+}
+
+
+void call_dump(std::vector<Node> &vect, unsigned idx)
+{
+    dump(vect, vect[idx]);
+}
 
 int main(int argc, char *argv[])
 {
@@ -16,11 +35,14 @@ int main(int argc, char *argv[])
         return 1;
     }
     auto vect_h = parse_input(argv[1], 'H');
-    auto vect_v = parse_input(argv[1], 'V');
+    //auto vect_v = parse_input(argv[1], 'V');
 
-    std::cout << vect_h.size() << std::endl;
 
-#pragma omp parallel for 
+ //   std::cout << vect_h.size() << std::endl;
+    unsigned b_idx = 0;
+    float b_score = 0;
+
+#pragma omp parallel for
     for (unsigned i = 0; i < vect_h.size(); ++i)
     {
         auto &set_cur = vect_h[i].set;
@@ -28,6 +50,13 @@ int main(int argc, char *argv[])
 
         for (unsigned j = 0; j < vect_h.size(); ++j)
         {
+            float delta = (float)vect_h[i].set.size() / (float)vect_h[j].set.size();
+            if (delta < 0)
+                delta = -delta;
+
+            if (delta < 0.5)
+                continue;
+
             if (i != j)
             {
                 auto &set_j = vect_h[j].set;
@@ -39,12 +68,28 @@ int main(int argc, char *argv[])
             }
 
             float cur_score = (float)cpt / (float)(vect_h.size());
-            if (cur_score > vect_h[i].score)
+            if (cur_score)
             {
-                vect_h[i].score = cur_score;
+                //vect_h[i].score = cur_score;
+            //    vect_h[i].idx = i;
+                vect_h[i].scores.push_back(cur_score);
+                vect_h[i].idx.push_back(j);
+#pragma omp critical
+                {
+                    if (cur_score > b_score)
+                    {
+                        b_idx = i;
+                        b_score = cur_score;
+                    }
+                }
             }
         }
     }
 
+    call_dump(vect_h, b_idx);
+
+
+    //std::cout << b_idx << std::endl;
+    //std::cout << b_score << std::endl;
     return write_output("out");
 }

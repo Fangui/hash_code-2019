@@ -23,13 +23,13 @@ std::vector<Node> parse_input(const std::string &inp, char c)
 
   //  std::cout << "Read " << inp << '\n';
     std::vector<Node> vect;
-    vect.reserve(size);
+    unsigned cpt = 0;
     while (std::getline(in, line))
     {
         if (line[0] != c)
             continue;
 
-        std::unordered_set<std::string> set(50);
+        std::unordered_set<std::string> set;
         for (unsigned i = 2; i < line.size(); ++i)
         {
             while ((i < line.size() && is_separator(line[i])) || (line[i] >= '0' && line[i] <= '9'))
@@ -42,7 +42,13 @@ std::vector<Node> parse_input(const std::string &inp, char c)
 
             set.insert(s);
         }
-        vect.push_back(Node(set));
+
+        if (set.size() > 1)
+        {
+            vect.push_back(Node(set, cpt));
+            vect[cpt].id = cpt;
+        }
+        ++cpt;
     }
 
     return vect;

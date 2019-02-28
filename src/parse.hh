@@ -3,17 +3,25 @@
 #include <vector>
 #include <unordered_set>
 
+#include <iostream>
+
 struct Node
 {
 
-    Node(std::unordered_set<std::string> set) :
+    Node(std::unordered_set<std::string> set, unsigned id) :
         set (set)
     {
-        score = 0;
+        id = id;
+        //std::cout << "yolo" << id << std::endl;
+
+        used = false;
     }
 
     std::unordered_set<std::string> set;
-    float score;
+    unsigned id;
+    std::vector<float> scores;
+    std::vector<unsigned> idx;
+    bool used;
 };
 
 std::vector<Node> parse_input(const std::string &inp, char c);
