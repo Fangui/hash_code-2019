@@ -2,7 +2,8 @@
 import sys
 
 class Photo(object):
-    def __init__(self, v, nbtags, tags):
+    def __init__(self, nb, v, nbtags, tags):
+        self.nb = nb
         self.v = v
         self.nbtags = nbtags
         self.tags = tags
@@ -13,15 +14,20 @@ class Photo(object):
     def __repr__(self):
         return str(self)
 
+    def print(self):
+        print(self.nb)
+
 def parse(filename):
     raw = []
     with open(filename) as f:
             size = f.readline()
+            i = 0
             for data in f:
-                photo = Photo(data.split()[0], data.split()[1], set(data.split()[2:]))
+                photo = Photo(i, data.split()[0], data.split()[1], set(data.split()[2:]))
+                i += 1
                 if (photo.v == 'H'):
                     raw.append(photo)
-    return size, raw
+    return raw
 
 
 def dump(res):
@@ -33,13 +39,10 @@ def dump(res):
 if __name__ == "__main__":
     res = []
 
-    size = 0
 
     filename = sys.argv[1]
-    (size, raw) = parse(filename)
-    s_size = size[0]
+    raw = parse(filename)
 
-
-    for i in range(0, len(res)):
-            res.append(i)
+    for i in raw:
+            res.append(i.nb)
     dump(res)
