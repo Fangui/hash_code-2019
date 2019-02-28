@@ -19,6 +19,7 @@ class Photo(object):
 
 def parse(filename):
     raw = []
+    vert = []
     with open(filename) as f:
             size = f.readline()
             i = 0
@@ -27,8 +28,10 @@ def parse(filename):
                 i += 1
                 if (photo.v == 'H'):
                     raw.append(photo)
+                else
+                    vert.append(photo)
     raw.sort(key=lambda x: x.nbtags, reverse=True)
-    return raw
+    return raw, vert
 
 
 def dump(res):
@@ -40,9 +43,11 @@ def dump(res):
 if __name__ == "__main__":
     res = []
 
+    raw = []
+    toto=[]
 
     filename = sys.argv[1]
-    raw = parse(filename)
+    (raw, toto) = parse(filename)
     print(raw)
     for i in raw:
             res.append(i.pos)
