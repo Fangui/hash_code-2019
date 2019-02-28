@@ -1,7 +1,10 @@
-python ./main.py ../a_example.txt > ../A.out
-python ./main.py ../b* > ../B.out
-python ./main.py ../c* > ../C.out
-python ./main.py ../d* > ../D.out
-python ./main.py ../e* > ../E.out
+#!/bin/sh
+PROG="./main.py"
+PROG="./lol.py"
+python $PROG ./a_example.txt > ./A.out
+python $PROG ./b* > ./B.out
+python $PROG ./c* > ./C.out
+python $PROG ./d* > ./D.out
+python $PROG ./e* > ./E.out
 
 zip ../code.zip ../src
