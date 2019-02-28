@@ -17,6 +17,9 @@ hash:
 	./$(BIN) test out1
 	./$(BIN) test out2
 
+run:
+	../launch.sh
+
 .PHONY: clean check
 clean:
 	${RM} ${OBJS}

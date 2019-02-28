@@ -1,7 +1,7 @@
-python src/main.py a_example.txt > out_a.out
-python src/main.py b* > out_b.out
-python src/main.py c* > out_c.out
-python src/main.py d* > out_d.out
-python src/main.py e* > out_e.out
+python ./main.py ../a_example.txt > ../A.out
+python ./main.py ../b* > ../B.out
+python ./main.py ../c* > ../C.out
+python ./main.py ../d* > ../D.out
+python ./main.py ../e* > ../E.out
 
-zip code.zip src
+zip ../code.zip ../src
