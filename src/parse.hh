@@ -5,19 +5,15 @@
 
 struct Node
 {
-    Node(std::unordered_set<std::string> set, std::vector<float> score) :
-        set (set), score (score) { }
 
-    Node(std::unordered_set<std::string> set, unsigned size) :
+    Node(std::unordered_set<std::string> set) :
         set (set)
     {
-        score.reserve(size);
-        for (unsigned i = 0; i < score.size(); ++i)
-            score[i] = 0;
+        score = 0;
     }
 
     std::unordered_set<std::string> set;
-    std::vector<float> score;
+    float score;
 };
 
 std::vector<Node> parse_input(const std::string &inp, char c);

@@ -19,6 +19,8 @@ int main(int argc, char *argv[])
     auto vect_v = parse_input(argv[1], 'V');
 
     std::cout << vect_h.size() << std::endl;
+
+#pragma omp parallel for 
     for (unsigned i = 0; i < vect_h.size(); ++i)
     {
         auto &set_cur = vect_h[i].set;
@@ -36,9 +38,11 @@ int main(int argc, char *argv[])
                 }
             }
 
-            vect_h[i].score[j] = (float)cpt / (float)(vect_h.size());
-            if (vect_h[i].score[j] > 0.55 && vect_h[i].score[j] < 0.55)
-                std::cout << vect_h[i].score[j] << std::endl;
+            float cur_score = (float)cpt / (float)(vect_h.size());
+            if (cur_score > vect_h[i].score)
+            {
+                vect_h[i].score = cur_score;
+            }
         }
     }
 

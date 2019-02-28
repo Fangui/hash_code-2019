@@ -42,7 +42,7 @@ std::vector<Node> parse_input(const std::string &inp, char c)
 
             set.insert(s);
         }
-        vect.push_back(Node(set, size));
+        vect.push_back(Node(set));
     }
 
     return vect;
