@@ -31,7 +31,6 @@ int main(int argc, char *argv[])
 {
     if (argc < 2)
     {
-        std::cout << "Usage : " << argv[0] << " inputfile outputfile" << '\n';
         return 1;
     }
     auto vect_h = parse_input(argv[1], 'H');
@@ -54,8 +53,6 @@ int main(int argc, char *argv[])
             if (delta < 0)
                 delta = -delta;
 
-            if (delta < 0.5)
-                continue;
 
             if (i != j)
             {
@@ -89,6 +86,8 @@ int main(int argc, char *argv[])
     call_dump(vect_h, b_idx);
 
 
+    for (unsigned i = 0; i < vect_h.size(); ++i)
+        call_dump(vect_h, i);
     //std::cout << b_idx << std::endl;
     //std::cout << b_score << std::endl;
     return write_output("out");

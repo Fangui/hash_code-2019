@@ -26,6 +26,7 @@ std::vector<Node> parse_input(const std::string &inp, char c)
     unsigned cpt = 0;
     while (std::getline(in, line))
     {
+	++cpt;
         if (line[0] != c)
             continue;
 
@@ -45,10 +46,9 @@ std::vector<Node> parse_input(const std::string &inp, char c)
 
         if (set.size() > 1)
         {
-            vect.push_back(Node(set, cpt));
-            vect[cpt].id = cpt;
+            vect.push_back(Node(set, cpt - 1));
+            vect[vect.size() - 1].id = cpt - 1;
         }
-        ++cpt;
     }
 
     return vect;
@@ -56,19 +56,6 @@ std::vector<Node> parse_input(const std::string &inp, char c)
 
 int write_output(const std::string &out_path)
 {
-    std::ofstream out (out_path);
-
-    if (out.is_open())
-    {
-
-        std::cout << "Write in : " << out_path << '\n';
-    }
-    else
-    {
-        std::cerr << "Error while writting in " << out_path << '\n';
-        return 1;
-    }
-
     return 0;
 }
 
