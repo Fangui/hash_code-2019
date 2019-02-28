@@ -1,12 +1,25 @@
 #!/usr/bin/env python3
 import sys
 
+class Photo(object):
+    def __init__(self, v, nbtags, tags):
+        self.v = v
+        self.nbtags = nbtags
+        self.tags = tags
+
+    def __str__(self):
+        return str(self.v) + str(self.nbtags) + str(self.tags)
+
+    def __repr__(self):
+        return str(self)
+
 def parse(filename):
     raw = []
     with open(filename) as f:
             size = f.readline()
             for data in f:
-                    raw.append(data.split( ))
+                photo = Photo(data.split()[0], data.split()[1], data.split()[2:])
+                raw.append(photo)
     return size, raw
 
 
