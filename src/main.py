@@ -2,8 +2,8 @@
 import sys
 
 class Photo(object):
-    def __init__(self, nb, v, nbtags, tags):
-        self.nb = nb
+    def __init__(self, pos, v, nbtags, tags):
+        self.pos = pos
         self.v = v
         self.nbtags = nbtags
         self.tags = tags
@@ -15,7 +15,7 @@ class Photo(object):
         return str(self)
 
     def print(self):
-        print(self.nb)
+        print(self.pos)
 
 def parse(filename):
     raw = []
@@ -27,6 +27,7 @@ def parse(filename):
                 i += 1
                 if (photo.v == 'H'):
                     raw.append(photo)
+    raw.sort(key=lambda x: x.nbtags, reverse=True)
     return raw
 
 
@@ -44,5 +45,5 @@ if __name__ == "__main__":
     raw = parse(filename)
 
     for i in raw:
-            res.append(i.nb)
+            res.append(i.pos)
     dump(res)
