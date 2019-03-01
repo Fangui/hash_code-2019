@@ -28,7 +28,7 @@ def parse(filename):
                 i += 1
                 if (photo.v == 'H'):
                     raw.append(photo)
-                else
+                else:
                     vert.append(photo)
     raw.sort(key=lambda x: x.nbtags, reverse=True)
     return raw, vert
@@ -36,9 +36,16 @@ def parse(filename):
 
 def dump(res):
         print(len(res))
+
+        cpt = 0
+        s = 0
         for data in res:
-                print(data)
-        return;
+            if cpt % 2 == 0:
+                s = data
+            else:
+                print (str(s) + ' ' + str(data))
+            cpt += 1
+        return
 
 if __name__ == "__main__":
     res = []
@@ -48,7 +55,6 @@ if __name__ == "__main__":
 
     filename = sys.argv[1]
     (raw, toto) = parse(filename)
-    print(raw)
-    for i in raw:
+    for i in toto:
             res.append(i.pos)
     dump(res)

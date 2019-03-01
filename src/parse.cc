@@ -45,7 +45,7 @@ std::vector<Node> parse_input(const std::string &inp, char c)
             set.insert(s);
         }
 
-        if (set.size() > 10)
+        if (set.size() > 1)
         {
             vect.push_back(Node(set, cpt - 1));
             vect[vect.size() - 1].id = cpt - 1;
