@@ -18,29 +18,12 @@ void dump(std::vector<Node> &vect, Node &n)
 
     for (unsigned i = 0; i < n.scores.size(); ++i)
     {
-        if (!vect[n.scores[i].second].id)
+        if (!vect[n.scores[i].second].used)
         {
             dump(vect, vect[n.scores[i].second]);
             return;
         }
     }
-    /*
-    float score_max = 0.f;
-    int id_max = -1;
-
-    for (unsigned i = 0; i < n.scores.size(); ++i)
-    {
-        float score_cur = dump(vect, vect[n.scores[i].second], score + n.scores[i].first, n.scores[i].second);
-        if (score_cur > score_max)
-        {
-            score_max = score_cur;
-            id_max = vect[n.scores[i].second].id;
-        }
-    }
-    if (id_max != -1)
-        std::cout << id_max << '\n';
-    return score + score_max;
-    */
 }
 
 bool all_visited(const std::vector<Node> &vect)
@@ -55,13 +38,7 @@ bool all_visited(const std::vector<Node> &vect)
 
 void call_dump(std::vector<Node> &vect, unsigned idx)
 {
-    /*
-    for (unsigned i = 0; i < vect.size(); ++i)
-    {
-        vect[i].used = false;
-    }*/
     dump(vect, vect[idx]);
-    //std::cout << total << '\n';
 }
 
 int main(int argc, char *argv[])
@@ -133,24 +110,24 @@ int main(int argc, char *argv[])
     {
         sort(vect_h[i].scores.begin(), vect_h[i].scores.end(),
                          [](pair_v a, pair_v b) { return a.first > b.first; });
+    }
 
     //    if (vect_h[i].scores.size() && vect_h[i].scores[0].first > 0.45)
       //      call_dump(vect_h, i);
+
+    unsigned b_idx = 0;
+    float b_score = 0;
+    for (unsigned i = 0; i < vect_h.size(); ++i)
+    {
+        if (vect_h[i].scores.size() && vect_h[i].scores[0].first > b_score)
+        {
+            b_score = vect_h[i].scores[0].first;
+            b_idx = i;
+        }
     }
 
-    sort(vect_h.begin(), vect_h.end(),
-                   [](const Node &a, const Node &b) {
-                   if (!a.scores.size() || !b.scores.size())
-                   {
-                       if (a.scores.size() && !b.scores.size())
-                           return true;
-                       else if (b.scores.size() && !a.scores.size())
-                           return false;
 
-                        return false;
-                   }
-                   return a.scores[0].first > b.scores[0].first; });
-
+    call_dump(vect_h, b_idx);
     /*
     for (unsigned i = 0; i < vect_h.size(); ++i)
     {
