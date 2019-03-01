@@ -23,6 +23,7 @@ std::vector<Node> parse_input(const std::string &inp, char c)
 
   //  std::cout << "Read " << inp << '\n';
     std::vector<Node> vect;
+    vect.reserve(size);
     unsigned cpt = 0;
     while (std::getline(in, line))
     {
@@ -44,7 +45,7 @@ std::vector<Node> parse_input(const std::string &inp, char c)
             set.insert(s);
         }
 
-        if (set.size() > 27)
+        if (set.size() > 10)
         {
             vect.push_back(Node(set, cpt - 1));
             vect[vect.size() - 1].id = cpt - 1;

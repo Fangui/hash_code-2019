@@ -5,6 +5,8 @@
 
 #include <iostream>
 
+using pair_v = std::pair<float, unsigned>;
+
 struct Node
 {
 
@@ -19,8 +21,7 @@ struct Node
 
     std::unordered_set<std::string> set;
     unsigned id;
-    std::vector<float> scores;
-    std::vector<unsigned> idx;
+    std::vector<pair_v> scores;
     bool used;
 };
 
