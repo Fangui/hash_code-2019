@@ -21,10 +21,9 @@ std::vector<Node> parse_input(const std::string &inp, char c)
     std::getline(in, line); // size
     unsigned size = stod(line);
 
-  //  std::cout << "Read " << inp << '\n';
     std::vector<Node> vect;
     vect.reserve(size);
-    unsigned cpt = 0;
+    unsigned cpt = 0; // Id
     while (std::getline(in, line))
     {
 	    ++cpt;
@@ -34,8 +33,9 @@ std::vector<Node> parse_input(const std::string &inp, char c)
         std::unordered_set<std::string> set;
         for (unsigned i = 2; i < line.size(); ++i)
         {
-            while ((i < line.size() && is_separator(line[i])) || (line[i] >= '0' && line[i] <= '9'))
-                ++i;
+            while ((i < line.size() && is_separator(line[i]))
+                                    || (line[i] >= '0' && line[i] <= '9'))
+                ++i; // remove size and space
 
             std::string s;
             s.reserve(line.size() - i);
@@ -45,14 +45,10 @@ std::vector<Node> parse_input(const std::string &inp, char c)
             set.insert(s);
         }
 
-        if (set.size() > 1)
-        {
+        if (set.size() > 1) // remove input with X tags
             vect.push_back(Node(set, cpt - 1));
-            vect[vect.size() - 1].id = cpt - 1;
-        }
     }
 
-    std::cout << vect.size() << std::endl;
     return vect;
 }
 
