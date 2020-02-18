@@ -7,46 +7,8 @@
 #include <cmath>
 #include "parse.hh"
 
-void dump(std::vector<Node> &vect, Node &n)
-{
-    if (n.used)
-        return;
-
-    n.used = true;
-
-    std::cout << n.id;
-    if (n.id_2 != -1) // vertical
-        std::cout << ' ' << n.id_2;
-    std::cout << '\n';
-
-    for (unsigned i = 0; i < n.scores.size(); ++i)
-    {
-        if (!vect[n.scores[i].second].used)
-        {
-            dump(vect, vect[n.scores[i].second]);
-            return;
-        }
-    }
-}
-
-unsigned node_left(const std::vector<Node> &vect)
-{
-    unsigned cpt = 0;
-    for (const auto &v :vect)
-    {
-        if (!v.used)
-            ++cpt;
-    }
-    return cpt;
-}
-
-void call_dump(std::vector<Node> &vect, unsigned idx)
-{
-    dump(vect, vect[idx]);
-}
-
-unsigned compute_score(const std::unordered_set<std::string> &set_cur,
-                       const std::unordered_set<std::string> &set_j)
+unsigned compute_score(const std::unordered_set<int> &set_cur,
+                       const std::unordered_set<int> &set_j)
 {
     unsigned cpt = 0;
 
@@ -68,16 +30,16 @@ unsigned compute_score(const std::unordered_set<std::string> &set_cur,
     return std::min(score1, std::min(score2, score3));
 }
 
-int nb_commun(std::unordered_set<std::string> &set_a,
-                   std::unordered_set<std::string> &set_b)
+int nb_diff(std::unordered_set<int> &set_a,
+              std::unordered_set<int> &set_b)
 {
     int cpt = 0;
     for (const auto &str : set_a)
     {
         if (set_b.find(str) == set_b.end())
             ++cpt;
-        else
-            --cpt;
+       // else
+         //   --cpt;
     }
 
     return cpt;
@@ -89,48 +51,55 @@ void merge(std::vector<Node> &vect_h,
     sort(vect_v.begin(), vect_v.end(),
          [] (Node &a, Node &b) { return a.set.size() < b.set.size(); });
 
-    for (unsigned i = 0; i < vect_v.size() / 2; ++i)
+    while (vect_v.size())
     {
-        vect_v[i].id_2 = vect_v[vect_v.size() - 1 - i].id;
+        size_t pos = 0;
+        auto prev_node = vect_v[pos];
+        vect_v.erase(vect_v.begin() + pos);
 
-        for (const auto &str : vect_v[vect_v.size() - 1 - i].set)
-            vect_v[i].set.insert(str);
-
-        vect_h.push_back(vect_v[i]);
-    }
-
-    /*
-    for (unsigned i = 0; i < vect_v.size(); ++i)
-    {
-        unsigned b_idx = 0;
-        int b_commun = -1000;
-
-        #pragma omp parallel for
-        for (unsigned j = vect_v.size() * 0.95; j < vect_v.size(); ++j)
+        int best_diff = -1000;
+        for (size_t i = 0; i < vect_v.size(); ++i)
         {
-            if (i == j)
-                continue;
-            int commun = nb_commun(vect_v[i].set, vect_v[j].set);
-            if (b_commun == -1000 || b_commun > commun) // store the minimum
+            int cur_diff = nb_diff(prev_node.set, vect_v[i].set);
+
+            if (cur_diff > best_diff)
             {
-                #pragma omp critical
-                {
-                    b_commun = commun;
-                    b_idx = j;
-                }
+                best_diff = cur_diff;
+                pos = i;
             }
         }
 
-        for (const auto &str : vect_h[b_idx].set)
-            vect_v[i].set.insert(str);
+        prev_node.set.insert(vect_v[pos].set.begin(), 
+                             vect_v[pos].set.end());
 
-        vect_v[i].id_2 = vect_v[b_idx].id;
+        prev_node.ids_.second = vect_v[pos].ids_.first;
+        vect_v.erase(vect_v.begin() + pos);
+        vect_h.push_back(prev_node);
+    }
 
+    /*
+    for (unsigned i = 0; i < vect_v.size() / 2; ++i)
+    {
+        vect_v[i].ids_.second = vect_v[vect_v.size() - 1 - i].ids_.first;
+
+        vect_v[i].set.insert(vect_v[vect_v.size() - 1 - i].set.begin(), 
+                             vect_v[vect_v.size() - 1 - i].set.end());
         vect_h.push_back(vect_v[i]);
-        vect_v.erase(vect_v.begin() + b_idx);
-        vect_v.erase(vect_v.begin() + i);
-        i -= 1;
     }*/
+
+    /*
+    for (unsigned i = 0; i + 1 < vect_v.size(); i += 2)
+    {
+        vect_v[i].ids_.second = vect_v[i + 1].ids_.first;
+
+        vect_v[i].set.insert(vect_v[i + 1].set.begin(), 
+                             vect_v[i + 1].set.end());
+        vect_h.push_back(vect_v[i]);
+    }*/
+
+
+    sort(vect_h.begin(), vect_h.end(),
+         [] (Node &a, Node &b) { return a.set.size() < b.set.size(); });
 }
 
 int main(int argc, char *argv[])
@@ -144,68 +113,63 @@ int main(int argc, char *argv[])
 
     merge(vect_h, vect_v);
     std::cout << vect_h.size() << '\n';
-    const unsigned nb_score = 1800; // nb score store
+
+    size_t pos = 0;
+    auto prev_node = vect_h[pos];
+
+    size_t score_total = 0;
+
+    std::cout << prev_node << '\n';
+    vect_h.erase(vect_h.begin() + pos);
+
+    while (vect_h.size())
+    {
+        int best_score = 0;
+        auto best_node = vect_h[0];
+        pos = 0;
+
+//        std::cerr << vect_h.size() << std::endl;
+
+#pragma omp parallel
+        {
+            int best_score_local = 0;
+            auto best_node_local = vect_h[0];
+            size_t pos_local = 0;
 
 #pragma omp parallel for schedule (dynamic)
-    for (unsigned i = 0; i < vect_h.size(); ++i)
-    {
-        for (unsigned j = 0; j < vect_h.size(); ++j)
-        {
-            if (j == i)
-                continue;
-
-            unsigned cur_score = compute_score(vect_h[i].set, vect_h[j].set);
-
-
-            /*
-
-            if (!cur_score)
-                continue;
-*/
-            if ( (float)cur_score / (float)vect_h[i].set.size() < 0.1)
-                continue;
-
-            auto &scores = vect_h[i].scores;
-
-            if (scores.size() < nb_score // insert if buffer not fill or if better score
-                 || cur_score > scores[scores.size() - 1].first)
+            for (size_t i = 0; i < vect_h.size(); ++i)
             {
-                auto pair = std::make_pair(cur_score, j);
-                scores.insert(std::upper_bound(scores.begin(), scores.end(),
-                              pair,
-                            [](pair_v a, pair_v b) { return a.first > b.first; }), pair);
+                auto &cur_node = vect_h[i];
 
-                if (scores.size() > nb_score)
-                    scores.pop_back();
+                if (cur_node.set.size() < 2 * (size_t)best_score)
+                    continue;
+
+                int cur_score = compute_score(cur_node.set, prev_node.set);
+
+                if (cur_score > best_score_local)
+                {
+                    best_node_local = cur_node;
+                    best_score_local = cur_score;
+                    pos_local = i; 
+                }
+            }
+#pragma omp critical
+            {
+                if (best_score_local > best_score)
+                {
+                    best_score = best_score_local;
+                    best_node = best_node_local;
+                    pos = pos_local;
+                }
             }
         }
+
+        std::cout << best_node << '\n';
+        score_total += best_score;
+        prev_node = best_node;
+        vect_h.erase(vect_h.begin() + pos);
     }
 
-    unsigned not_used_prev = node_left(vect_h);
-    for (unsigned j = 0; j < 100; ++j)
-    {
-        unsigned b_idx = 0;
-        float b_score = 0;
-        for (unsigned i = 0; i < vect_h.size(); ++i)
-        {
-            if (vect_h[i].scores.size() && !vect_h[i].used
-                                        && vect_h[i].scores[0].first > b_score)
-            {
-                b_score = vect_h[i].scores[0].first;
-                b_idx = i;
-            }
-        }
-        call_dump(vect_h, b_idx);
-
-        unsigned not_used = node_left(vect_h);
-        if (!not_used || not_used == not_used_prev)
-            break;
-
-        not_used_prev = not_used;
-    }
-
-    for (unsigned i = 0; i < vect_h.size(); ++i)
-        call_dump(vect_h, i);
-
-    return write_output("out");
+    std::cerr << "score " << score_total << std::endl;
+    return 0;
 }

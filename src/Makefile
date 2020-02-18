@@ -1,5 +1,5 @@
 CXX ?= g++
-CXXFLAGS += -Wall -Wextra -std=c++17 -pedantic -O3 -fopenmp
+CXXFLAGS += -Wall -Wextra -std=c++17 -pedantic  -fopenmp -g
 
 SRC = main.cc parse.cc
 OBJS = ${SRC:.cc=.o}
