@@ -1,5 +1,6 @@
 #pragma once
 
+#include <map>
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
@@ -16,20 +17,14 @@ struct Node
     {
         ids_.first = id;
         ids_.second = -1;
+        used = false;
     }
-
-    /*
-    Node(std::unordered_set<int> set, int id, int id2) :
-        set (set)
-    {
-        ids_.first = id;
-        ids_.second = id2;
-    }*/
 
     friend std::ostream& operator<<(std::ostream &out, const Node& node);
 
     static std::unordered_map<int, std::vector<int>> tags_to_id;
 
+    bool used;
     std::unordered_set<int> set;
     std::pair<int, int> ids_;
 };
@@ -43,4 +38,5 @@ inline std::ostream& operator<<(std::ostream &out, const Node& node)
     return out;
 }
 
-std::vector<Node> parse_input(const std::string &inp, char c);
+std::vector<Node> parse_input(const std::string &inp, char c, 
+                              std::vector<Node *> &vect_pointer);

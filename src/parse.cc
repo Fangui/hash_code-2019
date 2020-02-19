@@ -14,7 +14,8 @@ inline bool is_separator(char c)
 
 std::unordered_map<int, std::vector<int>> Node::tags_to_id;
 
-std::vector<Node> parse_input(const std::string &inp, char c)
+std::vector<Node> parse_input(const std::string &inp, char c, 
+                              std::vector<Node *> &vect_pointer)
 {
     std::ifstream in(inp);
     std::string str;
@@ -25,11 +26,16 @@ std::vector<Node> parse_input(const std::string &inp, char c)
 
     std::vector<Node> vect;
     vect.reserve(size);
+    vect_pointer.reserve(size);
 
-    std::unordered_map<std::string, int> tags;
+    while (vect_pointer.size() < size)
+        vect_pointer.push_back(nullptr);
 
-    int id_photo = 0;
+    static std::unordered_map<std::string, int> tags;
+
+    int id_photo = -1;
     static int id_tags = 0;
+
 
     while (std::getline(in, line))
     {
@@ -67,7 +73,8 @@ std::vector<Node> parse_input(const std::string &inp, char c)
         }
 
 //        if (set.size() > 1) // remove input with X tags
-        vect.push_back(Node(set, id_photo - 1));
+        vect.push_back(Node(set, id_photo));
+        vect_pointer[id_photo] = &(vect[vect.size() - 1]);
     }
 
     return vect;

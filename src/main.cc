@@ -46,11 +46,15 @@ int nb_diff(std::unordered_set<int> &set_a,
 }
 
 void merge(std::vector<Node> &vect_h,
-           std::vector<Node> &vect_v)
+           std::vector<Node> &vect_v,
+           std::vector<Node *> &vect_pointer)
 {
-    sort(vect_v.begin(), vect_v.end(),
+    auto copy_vect(vect_v);
+    
+    sort(copy_vect.begin(), copy_vect.end(),
          [] (Node &a, Node &b) { return a.set.size() < b.set.size(); });
 
+    /*
     while (vect_v.size())
     {
         size_t pos = 0;
@@ -70,36 +74,31 @@ void merge(std::vector<Node> &vect_h,
         }
 
         prev_node.set.insert(vect_v[pos].set.begin(), 
-                             vect_v[pos].set.end());
-
+                             vect_v[pos].set.end()); // merge verticaux
         prev_node.ids_.second = vect_v[pos].ids_.first;
-        vect_v.erase(vect_v.begin() + pos);
+
+        *vect_pointer[prev_node.ids_.second] = prev_node;
         vect_h.push_back(prev_node);
+
+        vect_pointer[prev_node.ids_.first] = &(vect_h[vect_h.size() - 1]);
+        vect_pointer[prev_node.ids_.second] = &(vect_h[vect_h.size() - 1]);
+    }*/
+
+    for (auto i = 0u; i + 1 < copy_vect.size(); i += 2)
+    {
+        auto merge = copy_vect[i];
+        merge.ids_.second = copy_vect[i + 1].ids_.first;
+        merge.set.insert(copy_vect[i + 1].set.begin(),
+                         copy_vect[i + 1].set.end());
+
+        vect_h.push_back(merge);
+        vect_pointer[merge.ids_.first] = &(vect_h[vect_h.size() - 1]);
+        vect_pointer[merge.ids_.second] = &(vect_h[vect_h.size() - 1]);
+
     }
 
-    /*
-    for (unsigned i = 0; i < vect_v.size() / 2; ++i)
-    {
-        vect_v[i].ids_.second = vect_v[vect_v.size() - 1 - i].ids_.first;
-
-        vect_v[i].set.insert(vect_v[vect_v.size() - 1 - i].set.begin(), 
-                             vect_v[vect_v.size() - 1 - i].set.end());
-        vect_h.push_back(vect_v[i]);
-    }*/
-
-    /*
-    for (unsigned i = 0; i + 1 < vect_v.size(); i += 2)
-    {
-        vect_v[i].ids_.second = vect_v[i + 1].ids_.first;
-
-        vect_v[i].set.insert(vect_v[i + 1].set.begin(), 
-                             vect_v[i + 1].set.end());
-        vect_h.push_back(vect_v[i]);
-    }*/
-
-
-    sort(vect_h.begin(), vect_h.end(),
-         [] (Node &a, Node &b) { return a.set.size() < b.set.size(); });
+//    sort(vect_h.begin(), vect_h.end(),
+  //       [] (Node &a, Node &b) { return a.set.size() < b.set.size(); });
 }
 
 int main(int argc, char *argv[])
@@ -108,20 +107,75 @@ int main(int argc, char *argv[])
     {
         return 1;
     }
-    auto vect_h = parse_input(argv[1], 'H');
-    auto vect_v = parse_input(argv[1], 'V');
 
-    merge(vect_h, vect_v);
+    std::vector<Node *> vect_pointer;
+    
+    auto vect_h = parse_input(argv[1], 'H', vect_pointer);
+    auto vect_v = parse_input(argv[1], 'V', vect_pointer);
+
+    merge(vect_h, vect_v, vect_pointer);
+    std::cerr << "merge finish" << std::endl;
     std::cout << vect_h.size() << '\n';
 
     size_t pos = 0;
     auto prev_node = vect_h[pos];
+    vect_pointer[pos]->used = true;
 
     size_t score_total = 0;
 
     std::cout << prev_node << '\n';
-    vect_h.erase(vect_h.begin() + pos);
 
+    for (size_t j = 0; j < vect_h.size() - 1; ++j)
+    {
+        size_t best_score = 0;
+        auto best_node = vect_h[0];
+        size_t i = 0;
+
+        for (const auto &id_tags : prev_node.set)
+        {
+            auto it = Node::tags_to_id.find(id_tags);
+            if (it == Node::tags_to_id.end())
+                continue;
+
+            for (const auto id_photo : it->second)
+            {
+                auto &cur_node = *(vect_pointer[id_photo]);
+                if (cur_node.used || (size_t)best_score > 2 * cur_node.set.size())
+                    continue;
+
+                auto cur_score = compute_score(prev_node.set, cur_node.set);
+
+                if (cur_score > best_score)
+                {
+                    best_score = cur_score;
+                    best_node = cur_node;
+                }
+            }
+            ++i;
+        }
+
+        if (best_node.used)
+        {
+            for (const auto &it : vect_h)
+            {
+                if (!it.used)
+                {
+                    best_node = it;
+                    break;
+                }
+            }
+        }
+        prev_node = best_node;
+
+        vect_pointer[prev_node.ids_.first]->used = true;
+        if (prev_node.ids_.second != -1)
+            vect_pointer[prev_node.ids_.second]->used = true;
+
+        std::cout << prev_node << '\n';
+        score_total += best_score;
+    }
+
+    /*
     while (vect_h.size())
     {
         int best_score = 0;
@@ -169,6 +223,7 @@ int main(int argc, char *argv[])
         prev_node = best_node;
         vect_h.erase(vect_h.begin() + pos);
     }
+    */
 
     std::cerr << "score " << score_total << std::endl;
     return 0;
